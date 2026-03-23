@@ -13,41 +13,55 @@ extern "C" {
 #endif
 /**
  * @brief The level that we should show debug events at.
- *
  */
 typedef enum sgLogLevel {
-  sgLog_LDefault = 0,
-  sgLog_LDebug = 1,
-  sgLog_LInfo = 2,
-  sgLog_LWarn = 3,
-  sgLog_LError = 4,
-  sgLog_LCritical = 5,
+	sgLogLevelDefault = 0,
+	sgLogLevelDebug = 1,
+	sgLogLevelInfo = 2,
+	sgLogLevelWarn = 3,
+	sgLogLevelError = 4,
+	sgLogLevelCritical = 5,
 } sgLogLevel;
 /**
  * @brief Opens and/or creates a file for debug logging.
  * @param logfileName The file to open to write error logs to during runtime.
  * @return 1 if successful, 0 if failed.
  */
-int sgInitializeLogSystem(const char *logfileName);
+int sgInitializeLogSystem(const char* logfileName);
 /**
  * @brief Closes the open file for logging.
  *
  * @return
  */
 int sgShutdownLogSystem(void);
-#define LOG_ENABLED(level) ((level) >= logLevel)
-#define LOG(level, fmt, ...)                                                   \
-  do {                                                                         \
-    if (LOG_ENABLED(level))                                                    \
-      logInternal(level, fmt, ##__VA_ARGS__);                                  \
-  } while (0)
-
-#define sgLogDebug(fmt, ...) LOG(sgLog_LDebug, fmt, ##__VA_ARGS__)
-#define sgLogInfo(fmt, ...) LOG(sgLog_LInfo, fmt, ##__VA_ARGS__)
-#define sgLogWarn(fmt, ...) LOG(sgLog_LWarn, fmt, ##__VA_ARGS__)
-#define sgLogError(fmt, ...) LOG(sgLog_LError, fmt, ##__VA_ARGS__)
-
-void sgSetDebugFunction(void (*)(const char *, const char *, int));
+/**
+ * @brief The internal logging function that the others will end up calling.
+ * Probably don't call it manually
+ *
+ * @param level The log level to log this as.
+ * @param fmt The data to pass to printf.
+ */
+void sgLogInternal(sgLogLevel level, const char* fmt, ...);
+// Do not log except errors and critical in release, and push errors to critical
+// for debugging
+#ifdef NDEBUG
+#define sgLogDebug(fmt, ...) ((void)0)
+#define sgLogInfo(fmt, ...) ((void)0)
+#define sgLogWarn(fmt, ...) ((void)0)
+#define sgLogError(fmt, ...) sgLogInternal(sgLogLevelError, fmt, ##__VA_ARGS__)
+#define sgLogCritical(fmt, ...) sgLogInternal(sgLogLevelCritical, fmt, ##__VA_ARGS__)
+#else
+#define sgLogDebug(fmt, ...) sgLogInternal(sgLogLevelDebug, fmt, ##__VA_ARGS__)
+#define sgLogInfo(fmt, ...) sgLogInternal(sgLogLevelInfo, fmt, ##__VA_ARGS__)
+#define sgLogWarn(fmt, ...) sgLogInternal(sgLogLevelWarn, fmt, ##__VA_ARGS__)
+#define sgLogError(fmt, ...) sgLogInternal(sgLogLevelError, fmt, ##__VA_ARGS__)
+#define sgLogCritical(fmt, ...) sgLogInternal(sgLogLevelCritical, fmt, ##__VA_ARGS__)
+#endif
+/**
+ * @brief Sets a function to call when the logger is triggered, used by engine
+ * @param func function to be called
+ */
+void sgSetDebugFunction(void (*func)(const char*, const char*, int));
 /**
  * @brief Sets the log level that we should use throughout the program.  If a
  * log is this level or higher, it will be shown, defaults to Debug

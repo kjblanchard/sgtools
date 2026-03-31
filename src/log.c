@@ -48,6 +48,9 @@ static const char* getTextByLevel(sgLogLevel level) {
 }
 
 void sgLogInternal(sgLogLevel level, const char* fmt, ...) {
+	if (level < sLogLevel) {
+		return;
+	}
 	// Write all vaargs to buffer using vsnprintf
 	char msgbuf[sMaxLogSize];
 	va_list args;

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-static const int sMaxLogSize = 4000;
+#define sMaxLogSize 4000
 static void (*sLogFunc)(const char*, const char*, int) = NULL;
 static FILE* sFptr = NULL;
 static sgLogLevel sLogLevel = sgLogLevelDebug;

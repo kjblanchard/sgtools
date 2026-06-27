@@ -13,6 +13,7 @@ add_library(${LIBRARY_NAME} STATIC
     ./src/log.c
 )
 target_include_directories(${LIBRARY_NAME} PUBLIC ./include)
+target_include_directories(${LIBRARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(SGTOOLS_INSTALL_LIB)
     install(TARGETS ${LIBRARY_NAME} ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
     install(DIRECTORY ./include/ DESTINATION include)

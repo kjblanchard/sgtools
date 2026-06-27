@@ -12,7 +12,7 @@ add_library(${LIBRARY_NAME} STATIC
     ./src/tools.c
     ./src/log.c
 )
-target_include_directories(${LIBRARY_NAME} PUBLIC ./include)
+target_include_directories(${LIBRARY_NAME} PUBLIC ./include) #probably can remove this cause of the below
 target_include_directories(${LIBRARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(SGTOOLS_INSTALL_LIB)
     install(TARGETS ${LIBRARY_NAME} ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)

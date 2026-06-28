@@ -9,23 +9,26 @@ extern "C" {
 // Useful not on void ptrs, but on a ptr that size is known.
 #define CLEAR_STRUCT(ptr) memset((ptr), 0, sizeof(*(ptr)))
 
-// Pass array ptr, size of array, and type and will resize to double size,
+
+  // Pass array ptr, size of array, and type and will resize to double size,
 // starts with 4 if it is 0
 #define RESIZE_ARRAY(arr, count, size, type)                                   \
   do {                                                                         \
-    if (count >= size) {                                                       \
-      size_t oldSize = (size);                                                 \
-      size_t newSize = (size == 0) ? 4 : (size) * 2;                           \
-      type *newStorage = realloc((arr), newSize * sizeof(type));               \
-      if (newStorage) {                                                        \
-        memset(newStorage + oldSize, 0, (newSize - oldSize) * sizeof(type));   \
-        (arr) = newStorage;                                                    \
-        (size) = newSize;                                                      \
-      } else {                                                                 \
-        sgLogError("Realloc failed when resizing array: %s, line %d",          \
-                   __FILE__, __LINE__);                                        \
-      }                                                                        \
-    }                                                                          \
+    if ((count) >= (size)) {                                                   \
+      size_t _ra_old_size__ = (size);                                          \
+      size_t _ra_new_size__ = ((size) == 0) ? 4 : ((size) * 2);               \
+      type *_ra_new_storage__ = (type *)realloc((arr),                        \
+                              _ra_new_size__ * sizeof(type));                 \
+      if (_ra_new_storage__) {                                                \
+        memset(_ra_new_storage__ + _ra_old_size__, 0,                         \
+               (_ra_new_size__ - _ra_old_size__) * sizeof(type));             \
+        (arr) = _ra_new_storage__;                                            \
+        (size) = _ra_new_size__;                                              \
+      } else {                                                                \
+        sgLogError("Realloc failed when resizing array: %s, line %d",         \
+                   __FILE__, __LINE__);                                       \
+      }                                                                       \
+    }                                                                         \
   } while (0)
 
 // Resize an array if needed, and also allocate memory for each of the new

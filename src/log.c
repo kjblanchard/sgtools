@@ -65,7 +65,7 @@ void sgLogInternal(sgLogLevel level, const char* fmt, ...) {
 	strftime(tmbuf, sizeof(tmbuf), "%H:%M-%S", gm_time);
 	FILE* outStream = level == sgLogLevelError ? stderr : stdout;
 	fprintf(outStream, "%s-%s> %s -\n", tmbuf, getTextByLevel(level), msgbuf);
-	if (sLogFunc) sLogFunc(tmbuf, fmt, level);
+	if (sLogFunc) sLogFunc(tmbuf, msgbuf, level);
 	bool logToFile = (level == sgLogLevelCritical || level == sgLogLevelError) && sFptr;
 	if (logToFile) fprintf(sFptr, "%s: %s\n", tmbuf, msgbuf);
 	if (level == sgLogLevelCritical) exit(1);

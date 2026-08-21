@@ -68,6 +68,12 @@ void sgSetDebugFunction(void (*func)(const char*, const char*, int));
  * @param newLevel
  */
 void sgSetLogLevel(int newLevel);
+/**
+ * @brief Sets the log level that we should Pipe to a file.  If a
+ * log is this level or higher, it will be shown, defaults to Error
+ * @param newLevel
+ */
+void sgSetFileLogLevel(int newLevel);
 #ifdef __cplusplus
 }
 #endif

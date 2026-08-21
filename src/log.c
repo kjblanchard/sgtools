@@ -9,6 +9,7 @@
 static void (*sLogFunc)(const char*, const char*, int) = NULL;
 static FILE* sFptr = NULL;
 static sgLogLevel sLogLevel = sgLogLevelDebug;
+static sgLogLevel sLogLevelFile = sgLogLevelError;
 
 int sgInitializeLogSystem(const char* logfileName) {
 	sgLogDebug("Opening log file at %s", logfileName);
@@ -66,9 +67,10 @@ void sgLogInternal(sgLogLevel level, const char* fmt, ...) {
 	FILE* outStream = level == sgLogLevelError ? stderr : stdout;
 	fprintf(outStream, "%s-%s> %s -\n", tmbuf, getTextByLevel(level), msgbuf);
 	if (sLogFunc) sLogFunc(tmbuf, msgbuf, level);
-	bool logToFile = (level == sgLogLevelCritical || level == sgLogLevelError) && sFptr;
+	bool logToFile = (level >= sLogLevelFile && sFptr);
 	if (logToFile) fprintf(sFptr, "%s: %s\n", tmbuf, msgbuf);
-	if (level == sgLogLevelCritical) exit(1);
+	if (level >= sgLogLevelCritical) exit(1);
 }
 
 void sgSetLogLevel(int newLevel) { sLogLevel = (sgLogLevel)newLevel; }
+void sgSetFileLogLevel(int newLevel) { sLogLevelFile = (sgLogLevel)newLevel; }
